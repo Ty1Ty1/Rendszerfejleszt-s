@@ -1,8 +1,8 @@
 # Rendszerfejleszt-s
 
-Hotelguru téma
+Hotelguru téma - 22-es csapat
 
-Orbán Kata
-Bottka Gábor
-Molnár István
+Orbán Kata,
+Bottka Gábor,
+Molnár István,
 Nákity Ádám

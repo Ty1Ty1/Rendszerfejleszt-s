@@ -1,5 +1,7 @@
 from flask import jsonify
+from app.blueprints import role_required
 from app.blueprints.user import bp
+from app.extensions import auth
 from app.blueprints.user.schemas import UserResponseSchema, UserRequestSchema, UserLoginSchema, RoleSchema, AddressSchema
 from app.blueprints.user.service import UserService
 from apiflask import HTTPError
@@ -34,9 +36,22 @@ def user_login(json_data):
 
 @bp.get('/roles')
 @bp.doc(tags=["user"])
+@bp.auth_required(auth) 
 @bp.output(RoleSchema(many=True))
 def user_list_roles():
     success, response = UserService.user_list_roles()
+    if success:
+        return response, 200
+    raise HTTPError(message=response, status_code=400)
+
+@bp.get('/myroles')
+@bp.doc(tags=["user"])
+@bp.output(RoleSchema(many=True))
+@bp.auth_required(auth)
+@role_required(["User"])
+@role_required(["Receptionist"])
+def user_list_user_roles():
+    success, response = UserService.list_user_roles(auth.current_user.get("user_id"))
     if success:
         return response, 200
     raise HTTPError(message=response, status_code=400)
@@ -45,6 +60,7 @@ def user_list_roles():
 @bp.get('/roles/<int:uid>')
 @bp.doc(tags=["user"])
 @bp.output(RoleSchema(many=True))
+@bp.auth_required(auth)
 def user_list_user_roles(uid):
     success, response = UserService.list_user_roles(uid)
     if success:

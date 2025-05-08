@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models import Room 
+from app.models.room import Room 
 from app.blueprints.admin.schemas import RoomAdminResponseSchema
 from sqlalchemy import select, and_
 
@@ -18,10 +18,10 @@ class AdminService:
     @staticmethod
     def create_room(data):
         try:
-            new_room = room(room_number=data['room_number'])
+            new_room = Room(room_number=data['room_number'])
             db.session.add(new_room)
             db.session.commit()
-            return true, RoomAdminResponseSchema().dump(new_room)
+            return True, RoomAdminResponseSchema().dump(new_room)
             return False, "Room creation not implemented" 
         except Exception as e:
             db.session.rollback()

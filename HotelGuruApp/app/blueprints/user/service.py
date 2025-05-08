@@ -8,8 +8,6 @@ from datetime import datetime, timedelta
 from sqlalchemy import select
 from authlib.jose import jwt, JoseError
 
-from sqlalchemy import select
-
 class UserService:
     
     @staticmethod
@@ -38,10 +36,10 @@ class UserService:
             return False, "Incorrect e-mail or password!"
            user_schema = UserResponseSchema().dump(user)
            user_schema["token"] = UserService.token_generate(user)
-           return True, user_schema   
+           return True, user_schema  
         except Exception as ex:
             return False, "Incorrect Login data!"
-        
+         
 
     @staticmethod
     def user_list_roles():
@@ -55,7 +53,6 @@ class UserService:
             return False, "User not found!"
         return True, RoleSchema().dump(obj=user.roles, many=True)
     
-
     @staticmethod
     def user_add_address(request):
         try:
@@ -65,6 +62,7 @@ class UserService:
         except Exception as ex:
             return False, "Incorrect Address data!"
         return True, address.id
+    
 
     @staticmethod
     def token_generate(user : User):

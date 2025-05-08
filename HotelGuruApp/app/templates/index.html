@@ -1,11 +1,124 @@
 <!DOCTYPE html>
-
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HotelGuru - User Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-section {
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1 class="text-center my-4">HotelGuru User Portal</h1>
 
+        <div id="register-section" class="form-section">
+            <h4>Register</h4>
+            <form id="register-form">
+                <input type="text" class="form-control mb-2" placeholder="Name" name="name" required />
+                <input type="email" class="form-control mb-2" placeholder="Email" name="email" required />
+                <input type="password" class="form-control mb-2" placeholder="Password" name="password" required />
+                <input type="text" class="form-control mb-2" placeholder="Phone" name="phone" />
+                <input type="text" class="form-control mb-2" placeholder="City" name="city" />
+                <input type="text" class="form-control mb-2" placeholder="Street" name="street" />
+                <input type="number" class="form-control mb-2" placeholder="Postal Code" name="postalcode" />
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+        </div>
+
+        <div id="login-section" class="form-section">
+            <h4>Login</h4>
+            <form id="login-form">
+                <input type="email" class="form-control mb-2" placeholder="Email" name="email" required />
+                <input type="password" class="form-control mb-2" placeholder="Password" name="password" required />
+                <button type="submit" class="btn btn-success w-100">Login</button>
+            </form>
+        </div>
+
+        <div id="user-section" class="form-section hidden">
+            <h4 id="welcome-message"></h4>
+            <p><strong>Email:</strong> <span id="user-email"></span></p>
+            <p><strong>Roles:</strong> <span id="user-roles"></span></p>
+            <button id="logout-btn" class="btn btn-danger w-100">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const registerForm = document.getElementById("register-form");
+        const loginForm = document.getElementById("login-form");
+        const userSection = document.getElementById("user-section");
+        const loginSection = document.getElementById("login-section");
+        const registerSection = document.getElementById("register-section");
+
+        const showUserInfo = (user) => {
+            document.getElementById("welcome-message").innerText = `Welcome, ${user.name}`;
+            document.getElementById("user-email").innerText = user.email;
+            document.getElementById("user-roles").innerText = user.roles.map(r => r.name).join(', ');
+            loginSection.classList.add("hidden");
+            registerSection.classList.add("hidden");
+            userSection.classList.remove("hidden");
+        };
+
+        registerForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                name: registerForm.name.value,
+                email: registerForm.email.value,
+                password: registerForm.password.value,
+                phone: registerForm.phone.value,
+                address: {
+                    city: registerForm.city.value,
+                    street: registerForm.street.value,
+                    postalcode: parseInt(registerForm.postalcode.value)
+                }
+            };
+            const res = await fetch("/user/registrate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                alert("Registration successful. You may now login.");
+                registerForm.reset();
+            } else {
+                alert("Registration failed.");
+            }
+        };
+
+        loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                email: loginForm.email.value,
+                password: loginForm.password.value
+            };
+            const res = await fetch("/user/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                const result = await res.json();
+                localStorage.setItem("token", result.token);
+                showUserInfo(result);
+            } else {
+                alert("Login failed.");
+            }
+        };
+
+        document.getElementById("logout-btn").onclick = () => {
+            localStorage.removeItem("token");
+            userSection.classList.add("hidden");
+            loginSection.classList.remove("hidden");
+            registerSection.classList.remove("hidden");
+        };
+    </script>
 </body>
 </html>

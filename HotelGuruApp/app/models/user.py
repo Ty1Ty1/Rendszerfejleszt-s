@@ -1,20 +1,21 @@
-# app/models/user.py
-from app.extensions import db
-from sqlalchemy import ForeignKey
+from app.extensions import db, Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.types import String
+from sqlalchemy.types import String, Integer
+from sqlalchemy import ForeignKey, Column, Table
 from typing import List, Optional
 from werkzeug.security import generate_password_hash, check_password_hash
-
-from app.models.association import UserRole 
 
 from typing import List, Optional, TYPE_CHECKING
 if TYPE_CHECKING:
     from app.models.role import Role
-    
-from typing import List, Optional, TYPE_CHECKING
-if TYPE_CHECKING:
-    from app.models.role import Address
+    from app.models.address import Address
+
+UserRole = Table(
+    "userroles",
+    Base.metadata,
+    Column("user_id", ForeignKey("users.id")),
+    Column("role_id", ForeignKey("roles.id"))
+)
 
 class User(db.Model):
     __tablename__ = "users"

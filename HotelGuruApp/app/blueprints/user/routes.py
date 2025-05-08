@@ -1,5 +1,5 @@
 from flask import jsonify
-from app.blueprints import role_required
+from HotelGuruApp.app.blueprints import role_required
 from app.blueprints.user import bp
 from app.extensions import auth
 from app.blueprints.user.schemas import UserResponseSchema, UserRequestSchema, UserLoginSchema, RoleSchema, AddressSchema
@@ -21,7 +21,6 @@ def user_registrate(json_data):
         return response, 200
     raise HTTPError(message=response, status_code=400)
 
-    
 
 @bp.post('/login')
 @bp.doc(tags=["user"])
@@ -49,7 +48,7 @@ def user_list_roles():
 @bp.output(RoleSchema(many=True))
 @bp.auth_required(auth)
 @role_required(["User"])
-@role_required(["Receptionist"])
+@role_required(["Chef"])
 def user_list_user_roles():
     success, response = UserService.list_user_roles(auth.current_user.get("user_id"))
     if success:
@@ -76,6 +75,3 @@ def user_address_add(json_data):
     if success:
         return str(response), 200
     raise HTTPError(message=response, status_code=400)
-
-
-

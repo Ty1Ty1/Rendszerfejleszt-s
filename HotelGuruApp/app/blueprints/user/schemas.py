@@ -12,7 +12,6 @@ class AddressSchema(Schema):
     street= fields.String()
     postalcode = fields.Integer()
 
-
 class UserRequestSchema(Schema):
         
     name = fields.String()
@@ -26,7 +25,6 @@ class PayloadSchema(Schema):
     roles  = fields.List(fields.Nested(RoleSchema))
     exp = fields.Integer()
 
-
 class UserResponseSchema(Schema):
     id = fields.Integer()
     name = fields.String()
@@ -34,11 +32,9 @@ class UserResponseSchema(Schema):
     address = fields.Nested(AddressSchema)
     token = fields.String()
     
-
 class UserLoginSchema(Schema):
     email = String(validate=Email())
     password = fields.String()
-    
 
 class RoleSchema(Schema):
     id = fields.Integer()

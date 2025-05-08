@@ -1,6 +1,8 @@
-
+from HotelGuruApp.app.blueprints.guest.schemas import ExtraServiceRequestSchema
 from app.extensions import db 
-from app.models import User, Room, Booking, ExtraService 
+from app.models.user import User
+from app.models.room import Room
+from app.models.booking import Booking
 from app.blueprints.guest.schemas import RoomResponseSchema, BookingResponseSchema
 from sqlalchemy import select, and_
 
@@ -46,9 +48,8 @@ class GuestService:
     @staticmethod
     def list_available_rooms():
         try:
-            available_rooms = Room.query.filter_by(status='Available').all() 
+            available_rooms = Room.query.filter_by(status='Available').all()
             return True, RoomResponseSchema(many=True).dump(available_rooms)
-            return True, [] 
         except Exception as e:
             return False, f"Failed to list rooms: {e}"
 
@@ -99,7 +100,7 @@ class GuestService:
                 return False, "Booking not found or does not belong to user"
             booking.status = 'Canceled'
             db.session.commit()
-            return False, "Booking cancellation not implemented or allowed" # Placeholder
+            return True, "Booking cancelled successfully"
         except Exception as e:
             db.session.rollback()
             return False, f"Booking cancellation failed: {e}"
@@ -110,7 +111,7 @@ class GuestService:
             booking = db.session.execute(select(Booking).filter(Booking.id == booking_id, Booking.user_id == user_id)).scalar_one_or_none()
             if not booking:
                 return False, "Booking not found or does not belong to user"
-            new_service = ExtraService(booking_id=booking_id, name=data['service_name'], quantity=data['quantity'])
+            new_service = ExtraServiceRequestSchema(booking_id=booking_id, name=data['service_name'], quantity=data['quantity'])
             db.session.add(new_service)
             db.session.commit()
             return False, "Adding extra service not implemented"

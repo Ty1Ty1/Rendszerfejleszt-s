@@ -1,5 +1,6 @@
+#from flask import Blueprint
 from apiflask import APIBlueprint
 
-bp = APIBlueprint('receptionist', __name__, tag="Receptionist")
+bp = APIBlueprint('receptionist', __name__, tag="receptionist")
 
 from app.blueprints.receptionist import routes

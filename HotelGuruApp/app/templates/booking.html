@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book a Room - HotelGuru</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Book a Room</h1>
+        <form id="booking-form">
+            <div class="mb-3">
+                <label for="checkin" class="form-label">Check-in Date</label>
+                <input type="date" class="form-control" id="checkin" name="checkin" required>
+            </div>
+            <div class="mb-3">
+                <label for="checkout" class="form-label">Check-out Date</label>
+                <input type="date" class="form-control" id="checkout" name="checkout" required>
+            </div>
+            <div class="mb-3">
+                <label for="room-type" class="form-label">Room Type</label>
+                <select class="form-select" id="room-type" name="room_type" required>
+                    <option value="">Select a room type</option>
+                    <option value="single">Single</option>
+                    <option value="double">Double</option>
+                    <option value="suite">Suite</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="guests" class="form-label">Number of Guests</label>
+                <input type="number" class="form-control" id="guests" name="guests" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Book Now</button>
+        </form>
+    </div>
+    <script>
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = {
+        checkin: this.checkin.value,
+        checkout: this.checkout.value,
+        room_type: this.room_type.value,
+        guests: this.guests.value
+      };
+      fetch('/guest/book-room', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (response.ok) {
+          alert('Room booked successfully!');
+          this.reset();
+        } else {
+          alert('Failed to book room.');
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+    </script>
+</body>
+</html>

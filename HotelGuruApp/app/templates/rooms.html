@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rooms - HotelGuru</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Available Rooms</h1>
+
+        <!-- Rooms List -->
+        <div class="row" id="rooms-list">
+            <!-- Example room card (to be dynamically generated) -->
+            <div class="col-md-4 mb-4" id="room-1">
+                <div class="card">
+                    <img src="room-image.jpg" class="card-img-top" alt="Room Image">
+                    <div class="card-body">
+                        <h5 class="card-title">Room 101</h5>
+                        <p class="card-text">A cozy room with a beautiful view. Perfect for a solo traveler or couple.</p>
+                        <p><strong>Price: $100/night</strong></p>
+                        <button class="btn btn-primary" onclick="bookRoom(101)">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Booking Modal -->
+        <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="bookingModalLabel">Book Your Room</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="booking-form">
+                            <div class="mb-3">
+                                <label for="booking-name" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="booking-name" required placeholder="Enter your name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="booking-email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="booking-email" required placeholder="Enter your email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="check-in-date" class="form-label">Check-In Date</label>
+                                <input type="date" class="form-control" id="check-in-date" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="check-out-date" class="form-label">Check-Out Date</label>
+                                <input type="date" class="form-control" id="check-out-date" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Function to simulate room booking
+    function bookRoom(roomId) {
+      const roomTitle = document.querySelector(`#room-${roomId} .card-title`).innerText;
+      const roomPrice = document.querySelector(`#room-${roomId} .card-text`).innerText.split(':')[1].trim();
+      const bookingForm = document.getElementById('booking-form');
+
+      // Optionally, you could prefill the form fields or handle based on the roomId
+
+      // Show modal for booking
+      const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+      bookingModal.show();
+    }
+
+    // Handle form submission for booking
+    document.getElementById('booking-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const bookingData = {
+        name: document.getElementById('booking-name').value,
+        email: document.getElementById('booking-email').value,
+        check_in_date: document.getElementById('check-in-date').value,
+        check_out_date: document.getElementById('check-out-date').value
+      };
+
+      // Make a request to the backend to process the booking (you would replace the URL with your API endpoint)
+      fetch('/api/book-room', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          alert('Your booking is confirmed!');
+          // Optionally redirect to a confirmation page or clear form
+        } else {
+          alert('Failed to book the room: ' + result.message);
+        }
+      })
+      .catch(error => {
+        alert('Error occurred: ' + error.message);
+      });
+    });
+    </script>
+</body>
+</html>

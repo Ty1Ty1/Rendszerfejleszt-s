@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for
 # Home route
 @bp.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('register.html')
 
 # Login route
 @bp.route('/login', methods=['GET', 'POST'])
